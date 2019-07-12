@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MHW Camera Configurator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+<body>
+    <h1>MHW Camera Configurator</h1>
+    <p>Based on the mod <a href="https://www.nexusmods.com/monsterhunterworld/mods/790">Camera Zoom</a> by <a href="https://www.nexusmods.com/monsterhunterworld/users/2157741">derfrak</a>.</p>
+    <p>To change the camera profile, after loading your character go through Menu > System > Options > Camera > Camera Distance.</p>
+    <hr>
+    <h2>Close</h2>
+    <p>Height:<input id="close-height" type="number"><button id="reset-close-height" class="reset">Default (-14)</button></p>
+    <p>Zoom:<input id="close-zoom" type="number"><button id="reset-close-zoom" class="reset">Default (70)</button></p>
+    <hr>
+    <h2>Default <span class="gray">(not yet changeable)</span></h2>
+    <p>Height:<input type="number" value="0" disabled><button disabled>Default (0)</button></p>
+    <p>Zoom:<input type="number" value="0" disabled><button disabled>Default (0)</button></p>
+    <hr>
+    <h2>Far</h2>
+    <p>Height:<input id="far-height" type="number"><button id="reset-far-height" class="reset">Default (5)</button></p>
+    <p>Zoom:<input id="far-zoom" type="number"><button id="reset-far-zoom" class="reset">Default (-50)</button></p>
+    <hr>
+    <button id="save">Save</button><button id="resetAll">Load Defaults</button><button id="export">Export (.zip)</button>
+</body>
+</html>

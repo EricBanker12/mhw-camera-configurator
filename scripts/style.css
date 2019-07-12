@@ -1,0 +1,61 @@
+html {
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #222;
+    color: white;
+    margin: 0;
+    min-width: 460px;
+}
+
+a {
+    color: skyblue;
+}
+
+h1, h2, p {
+    margin: 0;
+    margin-bottom: 0.5em;
+}
+
+body {
+    margin: 20px 20px;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+input {
+    width: 8ex;
+    margin-left: 18px;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    padding: 0 1ex;
+    background-color: #444;
+    color: white;
+    border: 2px solid #aaa;
+    margin-left: 20px;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#save {
+    margin-left: 0;
+}
+
+button:hover, button:disabled {
+    background-color: #222;
+    border-color: #444;
+}
+
+.gray {
+    color: #aaa;
+}
