@@ -1,10 +1,12 @@
 {
   "name": "mhw-camera-configurator",
-  "version": "1.0.0",
+  "productName": "MHW Camera Configurator",
+  "version": "1.1.0",
   "description": "Monster Hunter World camera configurator",
-  "main": "scripts/main.js",
+  "main": "bin/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-win": "electron-packager . mhw-camera-configurator --overwrite --asar --platform=win32 --arch=ia32 --icon=bin/gui/assets/icon.ico --prune=true --out=release-builds --version-string.CompanyName=EB --version-string.FileDescription=EB --version-string.ProductName=\"MHW Camera Configurator\""
   },
   "author": "Eric Banker",
   "repository": {
@@ -13,9 +15,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "zip-a-folder": "0.0.8"
+    "jszip": "^3.2.2"
   },
   "devDependencies": {
-    "electron": "^5.0.6"
+    "electron": "^5.0.6",
+    "electron-packager": "^14.0.1"
   }
 }

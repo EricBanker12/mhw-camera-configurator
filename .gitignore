@@ -1,3 +1,2 @@
-*.exe
-mod-files/**
 node_modules/**
+release-builds/**

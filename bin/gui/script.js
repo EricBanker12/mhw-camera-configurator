@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
-const zip = require('zip-a-folder')
+const Jszip = require('jszip')
+const electron = require('electron').remote
 
 const defaults = {
     close: {
@@ -30,7 +31,7 @@ let ready
 let saved
 
 // read values
-fs.readFile(path.join(__dirname, '..', 'mod-files', 'nativePC', 'common', 'camera', 'setting_basic.cms'), dataToConfig)
+fs.readFile(path.join(__dirname, 'assets', 'setting_basic.cms'), dataToConfig)
 
 // 
 document.addEventListener('DOMContentLoaded', function() {
@@ -58,7 +59,7 @@ function linkHandler(event) {
     // open links in external, default browser
     if (event.target.tagName == 'A') {
         event.preventDefault()
-        require('electron').shell.openExternal(event.target.href)
+        electron.shell.openExternal(event.target.href)
     }
 }
 
@@ -84,7 +85,19 @@ function saveConfig() {
 
 function exportZip() {
     if (!saved) saveConfig()
-    zip.zipFolder(path.join(__dirname, '..', 'mod-files'), path.join(__dirname, '..', 'camera-zoom.zip'))
+    let exportPath = electron.dialog.showSaveDialog({
+        title: 'Export MHW Camera Config as .zip',
+        defaultPath: path.join(__dirname,'camera-zoom'),
+        filters: [
+            {name: 'Archive', extensions: ['zip']},
+            {name: 'All Files', extensions: ['*']}
+        ]
+    })
+    if (exportPath) {
+        let zip = new Jszip()
+        zip.file(path.join('nativePC', 'common', 'camera', 'setting_basic.cms'), data)
+        zip.generateNodeStream({type:'nodebuffer',streamFiles:true,compression:'DEFLATE',compressionOptions:{level:1}}).pipe(fs.createWriteStream(exportPath))
+    }
 }
 
 function loadDefault(event) {
@@ -113,6 +126,10 @@ function dataToConfig(err, d) {
             zoom: data.readFloatLE(offsets.far.zoom)
         }
     }
+    // load previous settings from ".../AppData/roaming/MHW Camera Configurator/config.json"
+    if (fs.existsSync(path.join(electron.app.getPath('userData'),'config.json'))) {
+        Object.assign(config, JSON.parse(fs.readFileSync(path.join(electron.app.getPath('userData'),'config.json'),{encoding:'utf8'})))
+    }
     if (ready) loadConfig()
     else document.addEventListener('DOMContentLoaded', loadConfig)
 }
@@ -124,6 +141,7 @@ function configToData() {
     // far
     data.writeFloatLE(config.far.height, offsets.far.height)
     data.writeFloatLE(config.far.zoom, offsets.far.zoom)
-    fs.writeFileSync(path.join(__dirname, '..', 'mod-files', 'nativePC', 'common', 'camera', 'setting_basic.cms'), data)
+    //console.log(electron.app.getPath('userData'))
+    fs.writeFileSync(path.join(electron.app.getPath('userData'),'config.json'),JSON.stringify(config,null,'    '),{encoding:'utf8'})
     saved = true
 }
