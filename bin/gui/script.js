@@ -31,9 +31,9 @@ let ready
 let saved
 
 // read values
-fs.readFile(path.join(__dirname, 'assets', 'setting_basic.cms'), dataToConfig)
+fs.readFile(path.join(__dirname, 'assets', 'blob'), {encoding: 'utf8'}, dataToConfig)
 
-// 
+
 document.addEventListener('DOMContentLoaded', function() {
     ready = true
     // add event listeners
@@ -47,8 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
     for (let resetButton of document.getElementsByClassName('reset')) {
         resetButton.addEventListener('click', loadDefault)
     }
-    //save
-    document.getElementById('save').addEventListener('click', saveConfig)
     // reset all
     document.getElementById('resetAll').addEventListener('click', loadAllDefaults)
     // export .zip
@@ -110,12 +108,13 @@ function loadAllDefaults() {
     document.getElementById('close-zoom').value = defaults.close.zoom
     document.getElementById('far-height').value = defaults.far.height
     document.getElementById('far-zoom').value = defaults.far.zoom
+    saveConfig()
 }
 
-function dataToConfig(err, d) {
+function dataToConfig(err, dataStr) {
     if (err) throw err
     //console.log(d)
-    data = d
+    data = Buffer.from(dataStr, 'base64')
     config = {
         close: {
             height: data.readFloatLE(offsets.close.height),
