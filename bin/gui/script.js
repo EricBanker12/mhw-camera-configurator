@@ -31,7 +31,7 @@ let ready
 let saved
 
 // read values
-fs.readFile(path.join(__dirname, 'assets', 'blob'), {encoding: 'utf8'}, dataToConfig)
+fs.readFile(path.join(__dirname, 'assets', 'blob'), {encoding: 'utf-8'}, dataToConfig)
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -83,7 +83,7 @@ function saveConfig() {
 
 function exportZip() {
     if (!saved) saveConfig()
-    let exportPath = electron.dialog.showSaveDialog({
+    electron.dialog.showSaveDialog({
         title: 'Export MHW Camera Config as .zip',
         defaultPath: path.join(__dirname,'camera-zoom'),
         filters: [
@@ -91,11 +91,13 @@ function exportZip() {
             {name: 'All Files', extensions: ['*']}
         ]
     })
-    if (exportPath) {
-        let zip = new Jszip()
-        zip.file(path.join('nativePC', 'common', 'camera', 'setting_basic.cms'), data)
-        zip.generateNodeStream({type:'nodebuffer',streamFiles:true,compression:'DEFLATE',compressionOptions:{level:1}}).pipe(fs.createWriteStream(exportPath))
-    }
+    .then(obj => {
+        if (obj.filePath) {
+            let zip = new Jszip()
+            zip.file(path.join('nativePC', 'common', 'camera', 'setting_basic.cms'), data)
+            zip.generateNodeStream({type:'nodebuffer',streamFiles:true,compression:'DEFLATE',compressionOptions:{level:1}}).pipe(fs.createWriteStream(obj.filePath))
+        }
+    })
 }
 
 function loadDefault(event) {
@@ -113,7 +115,6 @@ function loadAllDefaults() {
 
 function dataToConfig(err, dataStr) {
     if (err) throw err
-    //console.log(d)
     data = Buffer.from(dataStr, 'base64')
     config = {
         close: {
@@ -127,7 +128,9 @@ function dataToConfig(err, dataStr) {
     }
     // load previous settings from ".../AppData/roaming/MHW Camera Configurator/config.json"
     if (fs.existsSync(path.join(electron.app.getPath('userData'),'config.json'))) {
-        Object.assign(config, JSON.parse(fs.readFileSync(path.join(electron.app.getPath('userData'),'config.json'),{encoding:'utf8'})))
+        const oldConfig = JSON.parse(fs.readFileSync(path.join(electron.app.getPath('userData'),'config.json'),{encoding:'utf-8'}))
+        config.close = oldConfig.close || config.close
+        config.far = oldConfig.far || config.far
     }
     if (ready) loadConfig()
     else document.addEventListener('DOMContentLoaded', loadConfig)
@@ -141,6 +144,6 @@ function configToData() {
     data.writeFloatLE(config.far.height, offsets.far.height)
     data.writeFloatLE(config.far.zoom, offsets.far.zoom)
     //console.log(electron.app.getPath('userData'))
-    fs.writeFileSync(path.join(electron.app.getPath('userData'),'config.json'),JSON.stringify(config,null,'    '),{encoding:'utf8'})
+    fs.writeFileSync(path.join(electron.app.getPath('userData'),'config.json'),JSON.stringify(config,null,'    '),{encoding:'utf-8'})
     saved = true
 }
